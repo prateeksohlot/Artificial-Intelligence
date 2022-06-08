@@ -1,120 +1,54 @@
-__author__ = 'ps'
-#editted by ps
+__author__ = 'Prateek Sohlot' 
 
-'''
-
-'''
-import math
+from collections import namedtuple
 import random
 
-class Cards:
-    def __init__(self, rank, suit):
-        self.rank = rank
-        self.suit = suit
-
-    def show(self):
-        print("{} of {}".format(self.rank, self.suit))    
+Card = namedtuple('Card', ['rank', 'suit'])
     
 
 class Deck:
+
+    ranks = [str(n) for n in range(2,11)] + list('JQKA')
+    suits = 'spades diamonds clubs hearts'.split()
+    suit_value = dict(spades=3, hearts=2, diamonds=1, clubs=0)
     
-    def __init__(self):
-        self.cards = []
-        self.build()
+    def __init__(self):  
+        #creating a 52 card deck using nested for loop      
+        self._cards = [Card(rank, suit) for suit in self.suits for rank in self.ranks]        
+        self.shuffle()        
 
-    #Creating a deck of 52 cards
-    def build(self):
-        self.cards = []
-        for suit in ['Spades','Hearts','Diamonds','Clubs']:
-            for rank in ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']:
-                self.cards.append(Cards(rank, suit))                
+    def __len__(self):
+        return len(self._cards)
 
-    def show(self):
-        for c in self.cards:
-            c.show()
+    def __getitem__(self, position):
+        return self._cards[position]
 
-    def shuffle(self, n = 1):        
-        #we shuffle using fisher yates algorithm
-        lengthOfHand = len(self.cards)
+    def card_rank(self, Card):
+        rank_value = self.ranks.index(Card.rank) #returns first index of rank
+        return rank_value * len(self.suit_value) + self.suit_value[Card.suit]
+
+    def shuffle(self, n = 3):        
+    #we shuffle using fisher yates algorithm
+        lengthOfHand = len(self._cards)
         for _ in range(n):
             for i in range(lengthOfHand-1, 0, -1):
                 randi = random.randint(0, i)
                 if i == randi:
                     continue
-                self.cards[i], self.cards[randi] = self.cards[randi], self.cards[i]
-        return self.cards
+                self._cards[i], self._cards[randi] = self._cards[randi], self._cards[i]
+        return self._cards
 
-    def deal(self):
-        # we deal the top card
-        # c= []
-        for i in range(3):
-            self.cards.append(self.cards.pop(0))        
-        return self
+    def top_card(self):        
+        return self._cards.pop(0)
 
-    #to draw top most card
-    def drawCard(self):
-        return self.cards.pop(0)
-
-# we deal and evaluvate the hand
-class Hand:
-
-    def __init__(self):        
-        self.cards = []
-        self.rankValue = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}        #Look up table for values
-
-    # Updating new hand for the player
-    def updateHand(newHand):
-        self.cards = newHand
-
-    def showHand(self):
-        for c in self.cards:
-            c.show()
-
-    def sameRank(self, cardRank):
-        count = 0
-        for idx in range(3):
-            if cardRank == self.cards[idx].rank:
-                count+=1
-        return count
-
-    def evaluvateHand(self):
-        onHand = self.cards
-
-        #Dict for Evaluvating Hand
-        pairings  = {'Name': 'None', 'Rank' : "None", 'card': [(card.rank, card.suit, sameRank(card.rank)) for card in onHand]}
-        # sorting cards according to values from lookup table
-        pairings["card"].sort(key = lambda card: self.rankValue[card[0]], reverse = True)
-        return pairings
-
+'''
+#doctest
 
 deck = Deck()
-deck.shuffle(4)
-card = deck.deal()
-print(card.show())
+a = random.choice(deck)
+print("Size of Deck :", len(deck))         S
+print("draw random card :", random.choice(deck))  
+print("using shuffle", deck[0])
+print("random card rank:", a, deck.card_rank(a))  
 
-        
-    #     cardPairings["cards"].sort(key=lambda card:self.rankValue[card[0]], reverse= True)
-    #     # Sort cards according to one amount of same ranks in hand
-    #     cardPairings["cards"].sort(key=lambda card:card[2], reverse= True)
-
-    #     if cardPairings["cards"][0][2] == 3:
-    #         cardPairings["Category"] = "Three of a kind"
-    #     elif cardPairings["cards"][0][2] == 2:
-    #         cardPairings["Category"] = "Pair"
-    #     else:
-    #         cardPairings["Category"] = "One of a kind"
-    #     pairing= cardPairings["cards"][0][2] 
-    #     rank = cardPairings["cards"][0][0]
-
-
-    #     cardPairings["Value"] = pow(10, pairing) * self.rankValue[rank]
-    #     return cardPairings
-    
-    # # Print out the result
-    # def countSameRank(self, cardRank):
-    #     counter = 0
-    #     for cardIndex in range(3):
-    #         if cardRank == self.cards[cardIndex].rank:
-    #             counter+=1
-    #     return counter
-
+'''
