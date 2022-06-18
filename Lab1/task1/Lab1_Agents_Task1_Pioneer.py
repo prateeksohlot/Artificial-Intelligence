@@ -8,13 +8,11 @@
 # IMPORTANT: for each successful call to simxStart, there
 # should be a corresponding call to simxFinish at the end!
 import Lab1_Agents_Task1_World as World
-from random import randint
 
 # connect to the server
 robot = World.init()
 # print important parts of the robot
 print(sorted(robot.keys()))
-motorSpeed = dict(speedLeft = 0, speedRight = 0) #initally its stationary
 
 while robot: # main Control loop
     #######################################################
@@ -24,15 +22,23 @@ while robot: # main Control loop
     if simulationTime%1000==0:
         # print some useful info, but not too often
         print ('Time:',simulationTime,\
-              'ultraSonicSensorLeft:',World.getSensorReading("ultraSonicSensorLeft"),\
-              "ultraSonicSensorRight:", World.getSensorReading("ultraSonicSensorRight"))
+               'ultraSonicSensorLeft:',World.getSensorReading("ultraSonicSensorLeft"),\
+               "ultraSonicSensorRight:", World.getSensorReading("ultraSonicSensorRight"))
 
     ##############################################
     # Reasoning: figure out which action to take #
     ##############################################
-    
-    if simulationTime%12000==0:
-        motorSpeed = dict(speedLeft = randint(-200,200)/10.0, speedRight = randint(-200,200)/10.0)
+    if simulationTime<5000:
+        motorSpeed = dict(speedLeft=1, speedRight=1.5)
+    elif simulationTime<10000:
+        motorSpeed = dict(speedLeft=-1.5, speedRight=-1.0)
+    elif simulationTime<15000:
+        print ("Turning for a bit...",)
+        World.execute(dict(speedLeft=2, speedRight=-2),15000,-1)
+        print ("... got dizzy, stopping!")
+        print ("BTW, nearest energy block is at:",World.getSensorReading("energySensor"))
+    else:
+        motorSpeed = dict(speedLeft=0, speedRight=0)
         
     ########################################
     # Action Phase: Assign speed to wheels #

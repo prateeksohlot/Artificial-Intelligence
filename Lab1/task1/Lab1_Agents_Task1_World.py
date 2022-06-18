@@ -1,4 +1,3 @@
-__author__ = 'fyt'
 import vrep, math, time, random
 
 # stop the robot
